@@ -67,7 +67,6 @@ if(isset($_POST['login']))
 <body>
 	<?php include("templates/header.inc"); ?>
 	<?php include("templates/navigation.inc"); ?>
-	<?php include("templates/footer.inc"); ?>
 	<h2>Login</h2>
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 		<?php if(isset($error['main'])) { echo "<p class='error'>{$error['main']}</p>"; } ?>
@@ -85,5 +84,7 @@ if(isset($_POST['login']))
 			<input type="submit" name="login" value="Login" />
 		</div>
 	</form>
+	
+	<?php include("templates/footer.inc"); ?>
 </body>
 </html>
