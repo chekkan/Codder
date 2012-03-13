@@ -7,6 +7,8 @@
  *	Last updated: 12/03/2012
  */
  
+session_start();
+ 
 $site_title = "Codders";
 
 ?>

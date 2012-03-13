@@ -8,6 +8,11 @@
  */
  
 session_start();
+
+if(isset($_SESSION['user_id']))
+{
+	header("Location: index.php");
+}
  
 $site_title = "Codders";
 
@@ -62,7 +67,7 @@ if(isset($_POST['login']))
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Login</title>
+	<title>Login - <?php echo $site_title; ?></title>
 </head>
 <body>
 	<?php include("templates/header.inc"); ?>
@@ -73,7 +78,9 @@ if(isset($_POST['login']))
 		<div>
 			<label for="email">Email</label>
 			<?php if (isset($errors['email'])) { echo "<p class='error'>{$errors['email']}</p>"; } ?>
-			<input type="email" id="email" name="email" placeholder="you@domain.com" />
+			<input type="email" id="email" name="email" placeholder="you@domain.com"
+				<?php if(isset($_POST['email'])) echo "value=\"{$_POST['email']}\""; ?>
+			/>
 		</div>
 		<div>
 			<label for="password">Password</label>
