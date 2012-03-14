@@ -1,7 +1,7 @@
 <?php
 
 /*
- *	Description	: Registration page
+ *	Description : Registration page
  *	Contributors: harish2k9
  *	File created: 13/03/2012
  *	Last updated: 13/03/2012
@@ -78,6 +78,7 @@ if(isset($_POST['register']))
 <html>
 <head>
 	<title>Register - <?php echo $site_title; ?></title>
+        <link rel="stylesheet" href="styles/master.css" type="text/css" />
 </head>
 <body>
 	<?php include("templates/header.inc"); ?>
@@ -100,7 +101,7 @@ if(isset($_POST['register']))
 		<div>
 			<label for="confirm_password">Confirm Password</label>
 			<?php if(isset($errors['confirm_password'])) echo "<p class='error'>{$errors['confirm_password']}</p>"; ?>
-			<input type="password" id="confirm_passsword" name="confirm_password" />
+			<input type="password" id="confirm_password" name="confirm_password" />
 		</div>
 		<div>
 			<input type="submit" name="register" value="Register" />
