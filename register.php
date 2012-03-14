@@ -9,6 +9,7 @@
 
 require_once "config/config.php";
 require_once 'Helpers/DatabaseHelper.php';
+require_once "Helpers/FormHelper.php";
 
 session_start();
 
@@ -79,29 +80,18 @@ if(isset($_POST['register']))
 	<?php include("templates/header.inc"); ?>
 	<?php include("templates/navigation.inc"); ?>
 	<h2>Register</h2>
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-		<?php if(isset($errors['main'])) echo "<p class=\"error\">{$errors['main']}</p>"; ?>
-		<div>
-			<label for="email">Email</label>
-			<?php if(isset($errors['email'])) echo "<p class='error'>{$errors['email']}</p>"; ?>
-			<input type="email" id="email" name="email" placeholder="you@domain.com"
-				<?php if(isset($_POST['email'])) echo "value=\"{$_POST['email']}\""; ?>
-			/>
-		</div>
-		<div>
-			<label for="password">Password</label>
-			<?php if(isset($errors['password'])) echo "<p class='error'>{$errors['password']}</p>"; ?>
-			<input type="password" id="password" name="password" />
-		</div>
-		<div>
-			<label for="confirm_password">Confirm Password</label>
-			<?php if(isset($errors['confirm_password'])) echo "<p class='error'>{$errors['confirm_password']}</p>"; ?>
-			<input type="password" id="confirm_password" name="confirm_password" />
-		</div>
-		<div>
-			<input type="submit" name="register" value="Register" />
-		</div>
-	</form>
-	<?php include("templates/footer.inc"); ?>
+        <?php
+        echo FormHelper::begin(NULL, "post", isset($errors['main']) ? $errors['main'] : NULL);
+        echo FormHelper::email(array("label"=>"Email", "name"=>"email",
+                    "value"=>isset($_POST['email']) ? $_POST['email'] : NULL,
+                    "error"=>isset($errors['email']) ? $errors['email'] : NULL));
+        echo FormHelper::password(array("label"=>"Password", "name"=>"password",
+                    "error"=>isset($errors['password']) ? $errors['password'] : NULL));
+        echo FormHelper::password(array("label"=>"Confirm Password", "name"=>"confirm_password", "id"=>"confirm_password",
+                    "error"=>isset($errors['confirm_password']) ? $errors['confirm_password'] : NULL));
+        echo FormHelper::end(array("name"=>"register", "value"=>"Register"));
+        
+        include("templates/footer.inc"); 
+        ?>
 </body>
 </html>
