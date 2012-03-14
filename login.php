@@ -8,7 +8,7 @@
  */
 
 require_once "config/config.php";
-require_once "Helpers/DatabaseHelper.php";
+require_once "Model/User.php";
 require_once "Helpers/FormHelper.php";
  
 session_start();
@@ -35,24 +35,15 @@ if(isset($_POST['login']))
 	
     if(empty($errors))
     {
-        // check if the user exist
-        $db = new DatabaseHelper(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        $sql = "SELECT * FROM users WHERE email='{$_POST['email']}' AND password='".sha1($_POST['password'])."';";
-        $result = $db->query($sql);
-        if(!$result)
-        {
-            die("Error with the query. " . mysql_error());
-        }
-
-        if($db->num_rows($result) != 1)
+        if(!User::Authenticate($_POST['email'], $_POST['password']))
         {
             $errors['main'] = "Email and password combination doesn't exist!";
         }
         else
         {
             // login the user
-            $user = $db->fetch_assoc($result);
-            $_SESSION['user_id'] = $user['user_id'];
+            $user = User::FindByEmail($_POST['email']);
+            $_SESSION['user_id'] = $user->id;
             header("Location: index.php");
         }
     }

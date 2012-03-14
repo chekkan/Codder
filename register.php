@@ -8,7 +8,7 @@
  */
 
 require_once "config/config.php";
-require_once 'Helpers/DatabaseHelper.php';
+require_once "Model/User.php";
 require_once "Helpers/FormHelper.php";
 
 session_start();
@@ -39,26 +39,19 @@ if(isset($_POST['register']))
     if(empty($errors))
     {
         // check to see if the email already exists
-        $db = new DatabaseHelper(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        $sql = "SELECT user_id FROM users WHERE email=\"{$_POST['email']}\";";
-        if(!$result = $db->query($sql))
-        {
-            die("Error with query! " . mysql_error());
-        }
-        if($db->num_rows($result) == 1)
+        $user = User::FindByEmail($_POST['email']);
+        if($user == NULL)
         {
             $errors['main'] = "Email address already registered!";
         }
         else
         {
             // register the user details and forward them to login page.
-            $sql = "INSERT INTO users(email, password, date_registered)
-                            VALUES(\"{$_POST['email']}\", \"".sha1($_POST['password'])."\", \"".date("Y-m-d H:i:s")."\");";
-            if(!$result = $db->query($sql))
-            {
-                die("Error with query! " . mysql_error());
-            }
-            if($db->affected_rows() == 0)
+            $user = new User();
+            $user->email = $_POST['email'];
+            $user->password = sha1($_POST['password']);
+            $user->date_registered = date("Y-m-d H:i:s");
+            if(!$user->save())
             {
                 $errors['main'] = "Something went wrong. Try again later!";
             }

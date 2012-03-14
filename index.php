@@ -18,7 +18,7 @@ $site_title = "Codders";
         <link rel="stylesheet" href="styles/master.css" type="text/css" />
     </head>
     <body>
-<?php include("templates/header.inc"); ?>
+        <?php include("templates/header.inc"); ?>
         <?php include("templates/navigation.inc"); ?>
         <?php include("templates/footer.inc"); ?>
     </body>

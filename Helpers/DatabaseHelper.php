@@ -55,6 +55,11 @@ class DatabaseHelper {
     {
         return mysql_affected_rows($this->conn);
     }
+
+    public function insert_id() 
+    {
+        return mysql_insert_id($this->conn);
+    }
 }
 
 ?>
