@@ -6,6 +6,9 @@
  *	File created: 12/03/2012
  *	Last updated: 14/03/2012
  */
+
+require_once "config/config.php";
+require_once "Helpers/DatabaseHelper.php";
  
 session_start();
 
@@ -32,31 +35,22 @@ if(isset($_POST['login']))
     if(empty($errors))
     {
         // check if the user exist
-		$conn = mysql_connect("localhost", "root", "");
-        if(!$conn)
-        {
-            die("Cannot connect to the database. " . mysql_error());
-        }
-        $selected_db = mysql_select_db("codders");
-        if(!$selected_db)
-        {
-            die("Cannot select database. " . mysql_error());
-        }
+        $db = new DatabaseHelper(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         $sql = "SELECT * FROM users WHERE email='{$_POST['email']}' AND password='".sha1($_POST['password'])."';";
-        $result = mysql_query($sql);
+        $result = $db->query($sql);
         if(!$result)
         {
             die("Error with the query. " . mysql_error());
         }
 
-        if(mysql_num_rows($result) != 1)
+        if($db->num_rows($result) != 1)
         {
             $errors['main'] = "Email and password combination doesn't exist!";
         }
         else
         {
             // login the user
-            $user = mysql_fetch_assoc($result);
+            $user = $db->fetch_assoc($result);
             $_SESSION['user_id'] = $user['user_id'];
             header("Location: index.php");
         }

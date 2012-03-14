@@ -4,8 +4,11 @@
  *	Description : Registration page
  *	Contributors: harish2k9
  *	File created: 13/03/2012
- *	Last updated: 13/03/2012
+ *	Last updated: 14/03/2012
  */
+
+require_once "config/config.php";
+require_once 'Helpers/DatabaseHelper.php';
 
 session_start();
 
@@ -18,60 +21,52 @@ if(isset($_SESSION['user_id']))
 
 if(isset($_POST['register']))
 {
-	// validate forms
-	if(empty($_POST['email']))
-	{
-		$errors['email'] = "Required field. Cannot be empty.";
-	}
-	if(empty($_POST['password']))
-	{
-		$errors['password'] = "Required field. Cannot be empty.";
-	}
-	if($_POST['password'] != $_POST['confirm_password'])
-	{
-		$errors['confirm_password'] = "Passwords do not match.";
-	}
-	if(empty($errors))
-	{
-		// check to see if the email already exists
-		$conn = mysql_connect("localhost", "root", "");
-		if(!$conn)
-		{
-			die("Cannot connect to the server." . mysql_error());
-		}
-		$selected_db = mysql_select_db("codders");
-		if(!$selected_db)
-		{
-			die("Cannot select database. " . mysql_error());
-		}
-		$sql = "SELECT user_id FROM users WHERE email=\"{$_POST['email']}\";";
-		if(!$result = mysql_query($sql))
-		{
-			die("Error with query! " . mysql_error());
-		}
-		if(mysql_num_rows($result) == 1)
-		{
-			$errors['main'] = "Email address already registered!";
-		}
-		else
-		{
-			// register the user details and forward them to login page.
-			$sql = "INSERT INTO users(email, password, date_registered)
-					VALUES(\"{$_POST['email']}\", \"".sha1($_POST['password'])."\", \"".date("Y-m-d H:i:s")."\");";
-			if(!$result = mysql_query($sql))
-			{
-				die("Error with query! " . mysql_error());
-			}
-			if(mysql_affected_rows($conn) == 0)
-			{
-				$errors['main'] = "Something went wrong. Try again later!";
-			}
-			else
-			{
-				header("Location: login.php");
-			}
-		}
-	}
+    $errors = array();
+    // validate forms
+    if(empty($_POST['email']))
+    {
+            $errors['email'] = "Required field. Cannot be empty.";
+    }
+    if(empty($_POST['password']))
+    {
+            $errors['password'] = "Required field. Cannot be empty.";
+    }
+    if($_POST['password'] != $_POST['confirm_password'])
+    {
+            $errors['confirm_password'] = "Passwords do not match.";
+    }
+    if(empty($errors))
+    {
+        // check to see if the email already exists
+        $db = new DatabaseHelper(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        $sql = "SELECT user_id FROM users WHERE email=\"{$_POST['email']}\";";
+        if(!$result = $db->query($sql))
+        {
+            die("Error with query! " . mysql_error());
+        }
+        if($db->num_rows($result) == 1)
+        {
+            $errors['main'] = "Email address already registered!";
+        }
+        else
+        {
+            // register the user details and forward them to login page.
+            $sql = "INSERT INTO users(email, password, date_registered)
+                            VALUES(\"{$_POST['email']}\", \"".sha1($_POST['password'])."\", \"".date("Y-m-d H:i:s")."\");";
+            if(!$result = $db->query($sql))
+            {
+                die("Error with query! " . mysql_error());
+            }
+            if($db->affected_rows() == 0)
+            {
+                $errors['main'] = "Something went wrong. Try again later!";
+            }
+            else
+            {
+                header("Location: login.php");
+            }
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -85,7 +80,7 @@ if(isset($_POST['register']))
 	<?php include("templates/navigation.inc"); ?>
 	<h2>Register</h2>
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-		<?php if(isset($errors['main'])) echo "<p class=\"email\">{$errors['main']}</p>"; ?>
+		<?php if(isset($errors['main'])) echo "<p class=\"error\">{$errors['main']}</p>"; ?>
 		<div>
 			<label for="email">Email</label>
 			<?php if(isset($errors['email'])) echo "<p class='error'>{$errors['email']}</p>"; ?>
